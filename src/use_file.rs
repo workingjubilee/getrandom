@@ -26,7 +26,7 @@ use core::{
     target_os = "illumos"
 ))]
 const FILE_PATH: &str = "/dev/random\0";
-#[cfg(any(target_os = "android", target_os = "linux", target_os = "redox"))]
+#[cfg(any(target_os = "android", target_os = "linux", target_os = "redox", target_os = "postgres"))]
 const FILE_PATH: &str = "/dev/urandom\0";
 
 pub fn getrandom_inner(dest: &mut [u8]) -> Result<(), Error> {
@@ -72,7 +72,7 @@ fn get_rng_fd() -> Result<libc::c_int, Error> {
     }
 
     // On Linux, /dev/urandom might return insecure values.
-    #[cfg(any(target_os = "android", target_os = "linux"))]
+    #[cfg(any(target_os = "android", target_os = "linux", target_os = "postgres"))]
     wait_until_rng_ready()?;
 
     let fd = unsafe { open_readonly(FILE_PATH)? };
@@ -84,7 +84,7 @@ fn get_rng_fd() -> Result<libc::c_int, Error> {
 }
 
 // Succeeds once /dev/urandom is safe to read from
-#[cfg(any(target_os = "android", target_os = "linux"))]
+#[cfg(any(target_os = "android", target_os = "linux", target_os = "postgres"))]
 fn wait_until_rng_ready() -> Result<(), Error> {
     // Poll /dev/random to make sure it is ok to read from /dev/urandom.
     let fd = unsafe { open_readonly("/dev/random\0")? };

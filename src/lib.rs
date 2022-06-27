@@ -177,7 +177,7 @@ cfg_if! {
                  target_os = "redox"))] {
         mod util_libc;
         #[path = "use_file.rs"] mod imp;
-    } else if #[cfg(any(target_os = "android", target_os = "linux"))] {
+    } else if #[cfg(any(target_os = "android", target_os = "linux", target_os = "postgres"))] {
         mod util_libc;
         mod use_file;
         #[path = "linux_android.rs"] mod imp;
